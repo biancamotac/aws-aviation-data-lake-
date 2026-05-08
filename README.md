@@ -34,7 +34,7 @@ Dashboard Power BI
 
 # Estrutura do Bucket S3
 
-![Bucket Structure](images/estrutura_bucket.png)
+<img width="1622" height="529" alt="OBJETOSaws" src="https://github.com/user-attachments/assets/ad172cb8-5ac4-49ab-95ae-2cc06a32c4ac" />
 
 ---
 
@@ -89,11 +89,13 @@ Armazenamento dos arquivos CSV originais sem transformação.
 
 ### Estrutura da camada raw
 
-![Raw Layer](images/raw_layer.png)
+<img width="1615" height="332" alt="raw" src="https://github.com/user-attachments/assets/b91aacbf-f3e2-4d89-888e-dc4c6b3f834a" />
+
 
 ### Arquivo CSV original
 
-![Raw CSV](images/raw_csv.png)
+<img width="1616" height="343" alt="raw_a_a" src="https://github.com/user-attachments/assets/b6626d98-6987-4e07-9bd8-155ff7ee50fa" />
+
 
 ### Caminho S3
 
@@ -117,19 +119,19 @@ Dados tratados e convertidos para formato Parquet com particionamento por ano e 
 
 ### Estrutura da camada processed
 
-![Processed Layer](images/processed_layer.png)
+<img width="1612" height="331" alt="processed" src="https://github.com/user-attachments/assets/2777f038-e06b-4e29-871e-59005d63d2f6" />
 
 ### Estrutura particionada
 
-![Partitioned Data](images/partitioned_data.png)
+<img width="1624" height="651" alt="aviation-processed" src="https://github.com/user-attachments/assets/6676e3af-e2e1-4ee0-9377-57da895dc490" />
 
 ### Exemplo de partições por ano
 
-![Year Partition](images/year_partition.png)
+<img width="1621" height="689" alt="ano-processed" src="https://github.com/user-attachments/assets/e095cb7c-c8df-46bf-8f9e-67c997a30d76" />
 
 ### Exemplo de partições por mês
 
-![Month Partition](images/month_partition.png)
+<img width="1605" height="755" alt="mes-processed" src="https://github.com/user-attachments/assets/b4bdbcd0-040c-4982-be76-a6208719e1c8" />
 
 ### Caminho S3
 
@@ -145,19 +147,19 @@ Datasets analíticos otimizados para consultas e dashboards.
 
 ### Estrutura da camada curated
 
-![Curated Layer](images/curated_layer.png)
+<img width="1606" height="393" alt="curated" src="https://github.com/user-attachments/assets/e0caddb3-6cc4-4b8b-99d9-f52fbc9e5ae0" />
 
 ### Dataset de acidentes por estado
 
-![Acidentes por Estado](images/acidentes_estado.png)
+<img width="1616" height="356" alt="ape" src="https://github.com/user-attachments/assets/7052821f-2663-46a5-b129-0323b30842d8" />
 
 ### Dataset de fatalidades por fabricante
 
-![Fatalidades por Fabricante](images/fatalidades_fabricante.png)
+<img width="1624" height="362" alt="fpf" src="https://github.com/user-attachments/assets/867e0a01-f142-4e79-b837-5436e589ae2e" />
 
 ### Dataset de evolução temporal
 
-![Evolução Temporal](images/evolucao_temporal.png)
+<img width="1603" height="348" alt="et" src="https://github.com/user-attachments/assets/4c6553f0-c1d6-4a33-b438-6311dec14abc" />
 
 ### Caminho S3
 
@@ -171,7 +173,7 @@ s3://bianca-aviation-data-lake/curated/
 
 Os crawlers foram utilizados para catalogar automaticamente os dados nas camadas Bronze, Silver e Gold.
 
-![Glue Crawlers](images/crawlers.png)
+<img width="1661" height="308" alt="crawlers" src="https://github.com/user-attachments/assets/494a8204-3962-46fc-9bff-8b5cde5b7b6d" />
 
 ---
 
@@ -184,11 +186,11 @@ Os pipelines ETL foram desenvolvidos utilizando AWS Glue e PySpark.
 - etl-aviation-parquet
 - etl-gold-layer
 
-![Glue Jobs](images/glue_jobs.png)
+<img width="1621" height="481" alt="glue" src="https://github.com/user-attachments/assets/89b60931-f7a8-41cc-90f8-250054838759" />
 
 ### Execução do Glue Job Gold
 
-![Glue Job Run](images/glue_job_run.png)
+<img width="1617" height="362" alt="etlgold" src="https://github.com/user-attachments/assets/b194db2d-9fc7-4dad-a566-74afae543b83" />
 
 ---
 
@@ -280,7 +282,7 @@ GROUP BY ocorrencia_uf
 ORDER BY total_acidentes DESC;
 ```
 
-![Athena Query 1](images/athena_query_1.png)
+<img width="1538" height="779" alt="consulta 1" src="https://github.com/user-attachments/assets/7d1454be-76e6-46d9-8bdc-a43d09318fe2" />
 
 ---
 
@@ -292,7 +294,7 @@ FROM aviation
 WHERE ano = '2018';
 ```
 
-![Athena Query 2](images/athena_query_2.png)
+<img width="1537" height="790" alt="consulta 2" src="https://github.com/user-attachments/assets/bfea9a92-0c56-4f32-93c2-f8741a3806a3" />
 
 ---
 
