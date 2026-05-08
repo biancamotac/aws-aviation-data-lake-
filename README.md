@@ -4,7 +4,7 @@
 
 Este projeto demonstra a implementação de uma arquitetura moderna de Data Lake serverless na AWS utilizando dados reais de acidentes aeronáuticos brasileiros.
 
-O pipeline foi desenvolvido para realizar ingestão, catalogação, transformação, otimização e análise de dados públicos utilizando serviços cloud-native da AWS e boas práticas de Engenharia de Dados.
+O pipeline foi desenvolvido para realizar ingestão, catalogação, transformação, otimização e análise de dados utilizando serviços cloud-native da AWS e boas práticas de Engenharia de Dados.
 
 ---
 
@@ -13,7 +13,7 @@ O pipeline foi desenvolvido para realizar ingestão, catalogação, transformaç
 ```text
 Dados CSV Brutos
         ↓
-Amazon S3 (Camada Raw)
+Amazon S3 (Camada Bronze / Raw)
         ↓
 AWS Glue Crawler
         ↓
@@ -25,8 +25,16 @@ Parquet + Particionamento
         ↓
 Amazon Athena
         ↓
+Camada Gold (Curated)
+        ↓
 Dashboard Power BI
 ```
+
+---
+
+# Estrutura do Bucket S3
+
+![Bucket Structure](images/estrutura_bucket.png)
 
 ---
 
@@ -34,46 +42,60 @@ Dashboard Power BI
 
 | Tecnologia | Finalidade |
 |---|---|
-| AWS S3 | Armazenamento Data Lake |
-| AWS Glue | ETL e catálogo de dados |
+| AWS S3 | Data Lake |
+| AWS Glue | ETL e Catalogação |
 | Amazon Athena | Consultas SQL serverless |
 | PySpark | Transformação de dados |
-| Power BI | Visualização e dashboards |
 | SQL | Consultas analíticas |
-| Parquet | Formato otimizado de armazenamento |
+| Parquet | Formato otimizado |
+| Power BI | Dashboards e visualizações |
 
 ---
 
-# Dataset
+# Conjunto de Dados
 
-Dataset utilizado: Brazilian Aviation Accident Dataset
+Dataset utilizado: Acidentes aeronáuticos brasileiros.
 
 O conjunto de dados contém:
-- ocorrências aeronáuticas
-- informações das aeronaves
-- localização geográfica
-- registros de fatalidades
-- fases operacionais
-- fatores contribuintes
+
+- Informações de ocorrências aeronáuticas
+- Dados das aeronaves
+- Localização geográfica
+- Registros de fatalidades
+- Fatores contribuintes
+- Dados operacionais de voo
 
 ---
 
 # Objetivos do Projeto
 
-- Construir uma arquitetura cloud-native de Data Lake
+- Construir uma arquitetura moderna de Data Lake na AWS
 - Implementar pipelines ETL com PySpark
-- Otimizar consultas analíticas utilizando Parquet
+- Utilizar arquitetura serverless
 - Aplicar estratégias de particionamento
-- Criar uma solução escalável e de baixo custo
-- Demonstrar práticas modernas de Engenharia de Dados na AWS
+- Realizar consultas analíticas otimizadas
+- Demonstrar práticas modernas de Engenharia de Dados
+- Otimizar custos utilizando Parquet e Athena
 
 ---
 
 # Camadas do Data Lake
 
-## Camada Raw (Bronze)
+---
 
-Armazena os arquivos CSV originais sem modificações.
+## Camada Bronze (Raw)
+
+Armazenamento dos arquivos CSV originais sem transformação.
+
+### Estrutura da camada raw
+
+![Raw Layer](images/raw_layer.png)
+
+### Arquivo CSV original
+
+![Raw CSV](images/raw_csv.png)
+
+### Caminho S3
 
 ```text
 s3://bianca-aviation-data-lake/raw/
@@ -81,15 +103,35 @@ s3://bianca-aviation-data-lake/raw/
 
 ---
 
-## Camada Processed (Silver)
+## Camada Silver (Processed)
 
-Armazena dados tratados e transformados em formato Parquet.
+Dados tratados e convertidos para formato Parquet com particionamento por ano e mês.
 
-Transformações realizadas:
-- remoção de duplicados
-- padronização de datas
-- normalização de schema
-- criação de partições
+### Transformações realizadas
+
+- Remoção de duplicados
+- Conversão de tipos de dados
+- Padronização de colunas
+- Criação de colunas de particionamento
+- Conversão para Parquet
+
+### Estrutura da camada processed
+
+![Processed Layer](images/processed_layer.png)
+
+### Estrutura particionada
+
+![Partitioned Data](images/partitioned_data.png)
+
+### Exemplo de partições por ano
+
+![Year Partition](images/year_partition.png)
+
+### Exemplo de partições por mês
+
+![Month Partition](images/month_partition.png)
+
+### Caminho S3
 
 ```text
 s3://bianca-aviation-data-lake/processed/
@@ -97,9 +139,27 @@ s3://bianca-aviation-data-lake/processed/
 
 ---
 
-## Camada Curated (Gold)
+## Camada Gold (Curated)
 
-Armazena datasets analíticos otimizados para dashboards e BI.
+Datasets analíticos otimizados para consultas e dashboards.
+
+### Estrutura da camada curated
+
+![Curated Layer](images/curated_layer.png)
+
+### Dataset de acidentes por estado
+
+![Acidentes por Estado](images/acidentes_estado.png)
+
+### Dataset de fatalidades por fabricante
+
+![Fatalidades por Fabricante](images/fatalidades_fabricante.png)
+
+### Dataset de evolução temporal
+
+![Evolução Temporal](images/evolucao_temporal.png)
+
+### Caminho S3
 
 ```text
 s3://bianca-aviation-data-lake/curated/
@@ -107,38 +167,60 @@ s3://bianca-aviation-data-lake/curated/
 
 ---
 
-# Pipeline ETL
+# AWS Glue Crawlers
 
-O processo ETL foi desenvolvido utilizando PySpark e AWS Glue.
+Os crawlers foram utilizados para catalogar automaticamente os dados nas camadas Bronze, Silver e Gold.
 
-Principais transformações:
-- ingestão de CSV do S3
-- remoção de duplicados
-- conversão de datas
-- criação de colunas de partição
-- conversão para formato Parquet
-- armazenamento otimizado para consultas Athena
+![Glue Crawlers](images/crawlers.png)
+
+---
+
+# AWS Glue Jobs
+
+Os pipelines ETL foram desenvolvidos utilizando AWS Glue e PySpark.
+
+## Jobs criados
+
+- etl-aviation-parquet
+- etl-gold-layer
+
+![Glue Jobs](images/glue_jobs.png)
+
+### Execução do Glue Job Gold
+
+![Glue Job Run](images/glue_job_run.png)
 
 ---
 
 # Exemplo de ETL em PySpark
 
 ```python
+from awsglue.context import GlueContext
+from pyspark.context import SparkContext
 from pyspark.sql.functions import *
 
+# iniciar contexto spark
+sc = SparkContext.getOrCreate()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+
+# leitura CSV
 df = spark.read.csv(
     "s3://bianca-aviation-data-lake/raw/aviation_accidents/",
     header=True,
     inferSchema=True
 )
 
+# remover duplicados
 df = df.dropDuplicates()
 
+# converter data
 df = df.withColumn(
     "ocorrencia_dia",
     to_date(col("ocorrencia_dia"))
 )
 
+# criar colunas ano e mes
 df = df.withColumn(
     "ano",
     year(col("ocorrencia_dia"))
@@ -149,6 +231,7 @@ df = df.withColumn(
     month(col("ocorrencia_dia"))
 )
 
+# salvar parquet particionado
 df.write.mode("overwrite") \
     .partitionBy("ano", "mes") \
     .parquet(
@@ -161,60 +244,55 @@ df.write.mode("overwrite") \
 # Estratégia de Particionamento
 
 Os dados foram particionados por:
+
 - ano
 - mês
 
 Exemplo:
 
 ```text
-ano=2024/mes=5/
+ano=2008/mes=1/
 ```
 
-Benefícios:
-- redução de custo no Athena
-- melhoria de performance
-- arquitetura escalável
+## Benefícios
+
+- Redução de custo no Athena
+- Melhor desempenho de consultas
+- Menor volume de dados escaneados
+- Arquitetura escalável
 
 ---
 
-# Consultas Athena
+# Consultas no Amazon Athena
+
+As análises foram realizadas utilizando SQL serverless no Amazon Athena.
+
+---
 
 ## Acidentes por Estado
 
 ```sql
 SELECT
     ocorrencia_uf,
-    COUNT(*) acidentes
-FROM aviation_processed
+    COUNT(*) AS total_acidentes
+FROM acidentes_por_estado
 GROUP BY ocorrencia_uf
-ORDER BY acidentes DESC;
+ORDER BY total_acidentes DESC;
 ```
+
+![Athena Query 1](images/athena_query_1.png)
 
 ---
 
-## Fatalidades por Fabricante
+## Consulta de acidentes em 2018
 
 ```sql
-SELECT
-    aeronave_fabricante,
-    SUM(quantidade_fatalidades) fatalidades
-FROM aviation_processed
-GROUP BY aeronave_fabricante
-ORDER BY fatalidades DESC;
+SELECT *
+FROM aviation
+WHERE ano = '2018';
 ```
 
----
-
-## Evolução Temporal dos Acidentes
-
-```sql
-SELECT
-    ano,
-    COUNT(*) total
-FROM aviation_processed
-GROUP BY ano
-ORDER BY ano;
-```
+![Athena Query 2](images/athena_query_2.png)
 
 ---
 
@@ -222,36 +300,69 @@ ORDER BY ano;
 
 O projeto foi desenvolvido utilizando arquitetura serverless para minimizar custos operacionais.
 
-Estratégias utilizadas:
-- formato Parquet
-- particionamento
-- consultas serverless no Athena
-- processamento sob demanda
+## Estratégias utilizadas
 
-Estimativa de custo mensal:
-- aproximadamente US$1–5
+- Formato Parquet
+- Particionamento no S3
+- Consultas serverless com Athena
+- Processamento sob demanda
+- Glue Crawlers automáticos
+
+## Estimativa de custo mensal
+
+```text
+Aproximadamente US$ 1–5
+```
+
+---
+
+# Estrutura do Projeto
+
+```text
+aws-aviation-data-lake/
+│
+├── README.md
+│
+├── scripts/
+│   ├── etl_aviation_parquet.py
+│   └── etl_gold_layer.py
+│
+├── queries/
+│   └── athena_queries.sql
+│
+├── images/
+│   ├── estrutura_bucket.png
+│   ├── raw_layer.png
+│   ├── raw_csv.png
+│   ├── processed_layer.png
+│   ├── partitioned_data.png
+│   ├── year_partition.png
+│   ├── month_partition.png
+│   ├── curated_layer.png
+│   ├── acidentes_estado.png
+│   ├── fatalidades_fabricante.png
+│   ├── evolucao_temporal.png
+│   ├── crawlers.png
+│   ├── glue_jobs.png
+│   ├── glue_job_run.png
+│   ├── athena_query_1.png
+│   └── athena_query_2.png
+│
+└── dashboard/
+    └── powerbi_dashboard.png
+```
 
 ---
 
 # Melhorias Futuras
 
 - Infraestrutura como código com Terraform
-- Incremental Load
+- Pipeline incremental
 - Orquestração com Glue Workflows
 - Monitoramento com CloudWatch
 - Integração CI/CD
-- Validação de qualidade dos dados
-
----
-
-# Dashboard
-
-O dashboard analítico apresenta insights sobre:
-- distribuição de acidentes
-- análise de fatalidades
-- fabricantes de aeronaves
-- evolução temporal
-- concentração geográfica
+- Data Quality
+- Dashboards avançados no Power BI
 
 ---
 
@@ -259,17 +370,21 @@ O dashboard analítico apresenta insights sobre:
 
 - Engenharia de Dados
 - AWS Cloud
+- Data Lake Architecture
 - ETL
-- Arquitetura Data Lake
 - PySpark
 - SQL Analytics
-- Otimização Cloud
+- Amazon Athena
+- AWS Glue
+- Amazon S3
 - Modelagem de Dados
-- Analytics Serverless
+- Arquitetura Serverless
+- Otimização de Consultas
 
 ---
 
 # Autora
 
-Bianca Mota  
-Estudante de Engenharia de Dados e Análise de Dados
+## Bianca Mota
+
+Estudante de Engenharia de Dados e Análise de Dados.
