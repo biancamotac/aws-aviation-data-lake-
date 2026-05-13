@@ -30,6 +30,10 @@ Camada Gold (Curated)
 Dashboard Power BI
 ```
 
+<img width="1536" height="1024" alt="2fdc799c-a1e2-41ba-9b56-19d7142c367c" src="https://github.com/user-attachments/assets/3e148fca-d26d-4eed-bfe3-3082f9cc93a6" />
+
+
+
 ---
 
 # Estrutura do Bucket S3
