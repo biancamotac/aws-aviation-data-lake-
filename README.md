@@ -58,7 +58,7 @@ Dashboard Power BI
 
 # Conjunto de Dados
 
-Dataset utilizado: Acidentes aeronáuticos brasileiros.
+Dataset utilizado: Opendata AIG Brazil
 
 O conjunto de dados contém:
 
